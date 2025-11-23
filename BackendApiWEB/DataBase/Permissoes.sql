@@ -1,0 +1,5 @@
+﻿CREATE TABLE Permissoes (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Nome NVARCHAR(100) NOT NULL,
+    Descricao NVARCHAR(200)
+);
