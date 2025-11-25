@@ -1,22 +1,28 @@
 ﻿using BackendApiWEB.Data.Interfaces;
+using BackendApiWEB.Data.Repositories;
 using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
 using BackendApiWEB.Service.Interfaces;
-using BCrypt.Net;
 
-namespace BackendApiWEB.Service {
-    public class AuthService : IAuthService {
-        private readonly IUserRepository _repo;
+namespace BackendApiWEB.Service.Implementations
+{
+    public class AuthService : IAuthService
+    {
+        private readonly IUserRepository _usuarios;
+        private readonly IPermissaoRepository _permissoes;
 
-        public AuthService(IUserRepository repo) {
-            _repo = repo;
+        public AuthService(IUserRepository usuarios, IPermissaoRepository permissoes)
+        {
+            _usuarios = usuarios;
+            _permissoes = permissoes;
         }
 
         // ===========================
         // LOGIN
         // ===========================
-        public AuthResult Login(LoginRequest request) {
-            var usuario = _repo.GetByEmail(request.Email);
+        public AuthResult Login(LoginRequest request)
+        {
+            var usuario = _usuarios.GetByEmail(request.Email);
 
             if (usuario == null)
                 return new AuthResult(false, "Usuário não encontrado.", null);
@@ -24,7 +30,8 @@ namespace BackendApiWEB.Service {
             if (!BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
                 return new AuthResult(false, "Senha incorreta.", null);
 
-            var userResponse = new UserResponse {
+            var userResponse = new UserResponse
+            {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
                 Email = usuario.Email,
@@ -37,13 +44,15 @@ namespace BackendApiWEB.Service {
         // ===========================
         // REGISTRAR
         // ===========================
-        public AuthResult Registrar(RegistrarRequest request) {
-            var existente = _repo.GetByEmail(request.Email);
+        public AuthResult Registrar(RegistrarRequest request)
+        {
+            var existente = _usuarios.GetByEmail(request.Email);
 
             if (existente != null)
                 return new AuthResult(false, "E-mail já está cadastrado.", null);
 
-            var novo = new Usuario {
+            var novo = new Usuario
+            {
                 Id = Guid.NewGuid(),
                 Nome = request.Nome,
                 Email = request.Email,
@@ -51,12 +60,13 @@ namespace BackendApiWEB.Service {
                 DataCriacao = DateTime.Now
             };
 
-            var criado = _repo.Create(novo);
+            var criado = _usuarios.Create(novo);
 
             if (!criado)
                 return new AuthResult(false, "Erro ao registrar usuário.", null);
 
-            var permissaoCriada = _repo.InserirPermissaoPadrao(novo.Id);
+            // ===== PERMISSÃO PADRÃO (AGORA CORRETO) =====
+            var permissaoCriada = _permissoes.AddDefaultPermission(novo.Id);
 
             if (!permissaoCriada)
                 return new AuthResult(false, "Usuário criado mas não foi possível atribuir a permissão.", null);

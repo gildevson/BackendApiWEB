@@ -2,22 +2,32 @@
 using BackendApiWEB.Data.Interfaces;
 using BackendApiWEB.Data.Repositories;
 using BackendApiWEB.Service;
+using BackendApiWEB.Service.Implementations;
 using BackendApiWEB.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // -----------------------------
-// 🔥 INJEÇÃO DE DEPENDÊNCIA
+// 🔥 INJEÇÃO DE DEPENDÊNCIAS
 // -----------------------------
 builder.Services.AddSingleton<DbContextDapper>();
+
+// REPOSITORIES
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPermissaoRepository, PermissaoRepository>();
+
+// SERVICES
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPermissaoService, PermissaoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // -----------------------------
 // 🔥 CORS — permite Angular / Electron
 // -----------------------------
-builder.Services.AddCors(options => {
-    options.AddPolicy("DevCors", policy => {
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
         policy
             .WithOrigins("http://localhost:4200", "http://localhost")
             .AllowAnyHeader()
@@ -36,19 +46,19 @@ var app = builder.Build();
 // -----------------------------
 // 🔥 SWAGGER EM DEV
 // -----------------------------
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 // -----------------------------
-// 🚫 IMPORTANTE: REMOVER HTTPS REDIRECTION
+// ❗ IMPORTANTE: SEM HTTPS REDIRECTION
 // -----------------------------
-// Isto estava quebrando seu Angular/Electron
 // app.UseHttpsRedirection();
 
 // -----------------------------
-// 🔥 CORS ATIVO
+// 🔥 CORS
 // -----------------------------
 app.UseCors("DevCors");
 

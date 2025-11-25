@@ -1,15 +1,21 @@
-﻿using BackendApiWEB.Models;
+﻿using BackendApiWEB.DTOs;
+using BackendApiWEB.Models;
 
-namespace BackendApiWEB.Data.Interfaces {
-    public interface IUserRepository {
-        Usuario GetByEmail(string email);
-        Usuario GetById(Guid id);
-        IEnumerable<Usuario> GetAll();
+namespace BackendApiWEB.Data.Interfaces
+{
+    public interface IUserRepository
+    {
+        // BÁSICO
+        Usuario? GetByEmail(string email);
+        Usuario? GetById(Guid id);
+
+        // CRUD
         bool Create(Usuario usuario);
-        IEnumerable<Permissao> GetPermissoes(Guid usuarioId);
-        Usuario GetByDataCriacao(DateTime data);
+        bool Update(Guid id, UsuarioCreateDTO dto);
+        bool Delete(Guid id);
 
-        // ❌ ESTE AQUI ESTÁ FALTANDO!
-        bool InserirPermissaoPadrao(Guid usuarioId);
+        // LISTAGEM
+        IEnumerable<Usuario> GetPaged(int page, int pageSize);
+        int Count();
     }
 }
