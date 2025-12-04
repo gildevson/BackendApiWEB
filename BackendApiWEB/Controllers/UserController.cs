@@ -14,7 +14,7 @@ namespace BackendApiWEB.Controllers
             _service = service;
         }
 
-        // 1️⃣ LISTAR TODOS (com ou sem paginação)
+        // 1️ LISTAR TODOS (com ou sem paginação)
         // GET api/users?page=1&pageSize=10
         [HttpGet]
         public IActionResult GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -23,7 +23,7 @@ namespace BackendApiWEB.Controllers
             return Ok(users);
         }
 
-        // 2️⃣ BUSCAR POR ID
+        // 2️ BUSCAR POR ID
         // GET api/users/{id}
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
