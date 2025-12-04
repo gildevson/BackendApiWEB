@@ -24,7 +24,7 @@ namespace BackendApiWEB.Controllers
             if (!result.Sucesso)
                 return BadRequest(new { mensagem = result.Mensagem });
 
-            return Ok(new { mensagem = "Usuário deletado com sucesso." });
+            return Ok(new { mensagem = result.Mensagem });
         }
     }
 }

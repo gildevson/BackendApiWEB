@@ -1,5 +1,4 @@
 ﻿using BackendApiWEB.Data.Interfaces;
-using BackendApiWEB.Data.Repositories;
 using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
 using BackendApiWEB.Service.Interfaces;
@@ -60,18 +59,36 @@ namespace BackendApiWEB.Service.Implementations
                 DataCriacao = DateTime.Now
             };
 
-            var criado = _usuarios.Create(novo);
+            var criado = _usuarios.Create(novo); // GARANTA QUE ESSE MÉTODO RETORNE BOOL
 
             if (!criado)
                 return new AuthResult(false, "Erro ao registrar usuário.", null);
 
-            // ===== PERMISSÃO PADRÃO (AGORA CORRETO) =====
+            // PERMISSÃO PADRÃO
             var permissaoCriada = _permissoes.AddDefaultPermission(novo.Id);
 
             if (!permissaoCriada)
-                return new AuthResult(false, "Usuário criado mas não foi possível atribuir a permissão.", null);
+                return new AuthResult(false, "Usuário criado, mas não foi possível atribuir a permissão.", null);
 
             return new AuthResult(true, "Usuário registrado com sucesso!", null);
+        }
+
+        // ===========================
+        // DELETE
+        // ===========================
+        public AuthResult Delete(Guid id)
+        {
+            var user = _usuarios.GetById(id);
+
+            if (user == null)
+                return new AuthResult(false, "Usuário não encontrado.", null);
+
+            var deleted = _usuarios.Delete(id);
+
+            if (!deleted)
+                return new AuthResult(false, "Erro ao deletar usuário.", null);
+
+            return new AuthResult(true, "Usuário deletado com sucesso.", null);
         }
     }
 }

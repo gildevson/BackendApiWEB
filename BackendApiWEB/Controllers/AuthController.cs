@@ -32,7 +32,17 @@ namespace BackendApiWEB.Controllers {
 
             return Ok(result);
         }
-       
-        
+        // DELETE USUÁRIO
+        [HttpDelete]
+        public IActionResult Delete([FromBody] DeleteUserRequest dto)
+        {
+            var result = _authService.Delete(dto.Id);
+
+            if (!result.Sucesso)
+                return BadRequest(new { mensagem = result.Mensagem });
+
+            return Ok(new { mensagem = result.Mensagem });
+        }
+
     }
 }
