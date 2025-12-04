@@ -36,13 +36,13 @@ namespace BackendApiWEB.Controllers {
         [HttpDelete]
         public IActionResult Delete([FromBody] DeleteUserRequest dto)
         {
-            var result = _authService.Delete(dto.Id);
+            var result = _auth.Delete(dto.Id);
 
             if (!result.Sucesso)
                 return BadRequest(new { mensagem = result.Mensagem });
 
             return Ok(new { mensagem = result.Mensagem });
         }
-
+        
     }
 }
