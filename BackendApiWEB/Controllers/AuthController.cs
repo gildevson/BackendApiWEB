@@ -25,6 +25,9 @@ namespace BackendApiWEB.Controllers {
 
         [HttpPost("registrar")]
         public IActionResult Registrar([FromBody] RegistrarRequest dto) {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _auth.Registrar(dto);
 
             if (!result.Sucesso)
@@ -32,6 +35,7 @@ namespace BackendApiWEB.Controllers {
 
             return Ok(result);
         }
+
         // DELETE USUÁRIO
         [HttpDelete]
         public IActionResult Delete([FromBody] DeleteUserRequest dto)

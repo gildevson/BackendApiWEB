@@ -4,7 +4,14 @@
         public string Mensagem { get; set; }
         public UserResponse? Usuario { get; set; }
 
-        public AuthResult(bool sucesso, string mensagem, UserResponse? usuario) {
+        // ERRO (sem usuário)
+        public AuthResult(bool sucesso, string mensagem) {
+            Sucesso = sucesso;
+            Mensagem = mensagem;
+        }
+
+        // SUCESSO (com usuário)
+        public AuthResult(bool sucesso, string mensagem, UserResponse usuario) {
             Sucesso = sucesso;
             Mensagem = mensagem;
             Usuario = usuario;

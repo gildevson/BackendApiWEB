@@ -1,7 +1,16 @@
-﻿namespace BackendApiWEB.DTOs {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BackendApiWEB.DTOs {
     public class RegistrarRequest {
-        public string Nome { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Senha { get; set; } = string.Empty;
+        [Required]
+        public string Nome { get; set; }
+
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
+        [Required, MinLength(6)]
+        public string Senha { get; set; }
     }
+
+
 }

@@ -3,15 +3,12 @@ using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
 using BackendApiWEB.Service.Interfaces;
 
-namespace BackendApiWEB.Service.Implementations
-{
-    public class AuthService : IAuthService
-    {
+namespace BackendApiWEB.Service.Implementations {
+    public class AuthService : IAuthService {
         private readonly IUserRepository _usuarios;
         private readonly IPermissaoRepository _permissoes;
 
-        public AuthService(IUserRepository usuarios, IPermissaoRepository permissoes)
-        {
+        public AuthService(IUserRepository usuarios, IPermissaoRepository permissoes) {
             _usuarios = usuarios;
             _permissoes = permissoes;
         }
@@ -19,8 +16,7 @@ namespace BackendApiWEB.Service.Implementations
         // ===========================
         // LOGIN
         // ===========================
-        public AuthResult Login(LoginRequest request)
-        {
+        public AuthResult Login(LoginRequest request) {
             var usuario = _usuarios.GetByEmail(request.Email);
 
             if (usuario == null)
@@ -29,8 +25,7 @@ namespace BackendApiWEB.Service.Implementations
             if (!BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
                 return new AuthResult(false, "Senha incorreta.", null);
 
-            var userResponse = new UserResponse
-            {
+            var userResponse = new UserResponse {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
                 Email = usuario.Email,
@@ -43,41 +38,43 @@ namespace BackendApiWEB.Service.Implementations
         // ===========================
         // REGISTRAR
         // ===========================
-        public AuthResult Registrar(RegistrarRequest request)
-        {
-            var existente = _usuarios.GetByEmail(request.Email);
+        public AuthResult Registrar(RegistrarRequest dto) {
+            if (string.IsNullOrWhiteSpace(dto.Nome) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Senha)) {
+                return new AuthResult(false, "Todos os campos são obrigatórios.", null);
+            }
 
-            if (existente != null)
-                return new AuthResult(false, "E-mail já está cadastrado.", null);
+            // Verifica se o email já existe
+            var existente = _usuarios.GetByEmail(dto.Email);
+            if (existente != null) {
+                return new AuthResult(false, "Este email já está cadastrado.", null);
+            }
 
-            var novo = new Usuario
-            {
+            if (dto.Senha.Length < 6) {
+                return new AuthResult(false, "A senha deve ter no mínimo 6 caracteres.", null);
+            }
+
+            var novoUsuario = new Usuario {
                 Id = Guid.NewGuid(),
-                Nome = request.Nome,
-                Email = request.Email,
-                SenhaHash = BCrypt.Net.BCrypt.HashPassword(request.Senha),
+                Nome = dto.Nome,
+                Email = dto.Email,
+                SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
                 DataCriacao = DateTime.Now
             };
 
-            var criado = _usuarios.Create(novo); // GARANTA QUE ESSE MÉTODO RETORNE BOOL
+            var criado = _usuarios.Create(novoUsuario);
 
             if (!criado)
-                return new AuthResult(false, "Erro ao registrar usuário.", null);
+                return new AuthResult(false, "Erro ao criar usuário.", null);
 
-            // PERMISSÃO PADRÃO
-            var permissaoCriada = _permissoes.AddDefaultPermission(novo.Id);
-
-            if (!permissaoCriada)
-                return new AuthResult(false, "Usuário criado, mas não foi possível atribuir a permissão.", null);
-
-            return new AuthResult(true, "Usuário registrado com sucesso!", null);
+            return new AuthResult(true, "Usuário criado com sucesso!", null);
         }
 
         // ===========================
         // DELETE
         // ===========================
-        public AuthResult Delete(Guid id)
-        {
+        public AuthResult Delete(Guid id) {
             var user = _usuarios.GetById(id);
 
             if (user == null)
