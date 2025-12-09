@@ -3,20 +3,33 @@ using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
 using BackendApiWEB.Service.Interfaces;
 
-namespace BackendApiWEB.Service.Implementations {
-    public class AuthService : IAuthService {
+
+namespace BackendApiWEB.Service.Implementations
+{
+    public class AuthService : IAuthService
+    {
         private readonly IUserRepository _usuarios;
         private readonly IPermissaoRepository _permissoes;
+        private readonly IResetSenhaRepository _resetSenha;
+        private readonly IEmailService _email;
 
-        public AuthService(IUserRepository usuarios, IPermissaoRepository permissoes) {
+        public AuthService(
+            IUserRepository usuarios,
+            IPermissaoRepository permissoes,
+            IResetSenhaRepository resetSenha,
+            IEmailService email)
+        {
             _usuarios = usuarios;
             _permissoes = permissoes;
+            _resetSenha = resetSenha;
+            _email = email;
         }
 
         // ===========================
         // LOGIN
         // ===========================
-        public AuthResult Login(LoginRequest request) {
+        public AuthResult Login(LoginRequest request)
+        {
             var usuario = _usuarios.GetByEmail(request.Email);
 
             if (usuario == null)
@@ -25,7 +38,8 @@ namespace BackendApiWEB.Service.Implementations {
             if (!BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
                 return new AuthResult(false, "Senha incorreta.", null);
 
-            var userResponse = new UserResponse {
+            var userResponse = new UserResponse
+            {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
                 Email = usuario.Email,
@@ -38,24 +52,28 @@ namespace BackendApiWEB.Service.Implementations {
         // ===========================
         // REGISTRAR
         // ===========================
-        public AuthResult Registrar(RegistrarRequest dto) {
+        public AuthResult Registrar(RegistrarRequest dto)
+        {
             if (string.IsNullOrWhiteSpace(dto.Nome) ||
                 string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Senha)) {
+                string.IsNullOrWhiteSpace(dto.Senha))
+            {
                 return new AuthResult(false, "Todos os campos são obrigatórios.", null);
             }
 
-            // Verifica se o email já existe
             var existente = _usuarios.GetByEmail(dto.Email);
-            if (existente != null) {
+            if (existente != null)
+            {
                 return new AuthResult(false, "Este email já está cadastrado.", null);
             }
 
-            if (dto.Senha.Length < 6) {
+            if (dto.Senha.Length < 6)
+            {
                 return new AuthResult(false, "A senha deve ter no mínimo 6 caracteres.", null);
             }
 
-            var novoUsuario = new Usuario {
+            var novoUsuario = new Usuario
+            {
                 Id = Guid.NewGuid(),
                 Nome = dto.Nome,
                 Email = dto.Email,
@@ -74,7 +92,8 @@ namespace BackendApiWEB.Service.Implementations {
         // ===========================
         // DELETE
         // ===========================
-        public AuthResult Delete(Guid id) {
+        public AuthResult Delete(Guid id)
+        {
             var user = _usuarios.GetById(id);
 
             if (user == null)
@@ -87,5 +106,65 @@ namespace BackendApiWEB.Service.Implementations {
 
             return new AuthResult(true, "Usuário deletado com sucesso.", null);
         }
+
+        // ===========================
+        // SOLICITAR RESET SENHA
+        // ===========================
+        public AuthResult SolicitarResetSenha(ResetSenhaSolicitarRequest dto)
+        {
+            var usuario = _usuarios.GetByEmail(dto.Email);
+
+            if (usuario == null)
+                return new AuthResult(false, "E-mail não encontrado.", null);
+
+            var token = Guid.NewGuid();
+            var expiracao = DateTime.Now.AddHours(1);
+
+            _resetSenha.CriarToken(usuario.Id, token, expiracao);
+
+            var link = $"https://seusistema.com/resetar?token={token}";
+
+            _email.Enviar(
+                usuario.Email,
+                "Redefinição de Senha",
+                $"Clique no link para redefinir sua senha:<br><br><a href='{link}'>Redefinir Senha</a>"
+            );
+
+            return new AuthResult(true, "E-mail enviado com sucesso!", null);
+        }
+
+        // ===========================
+        // VALIDAR TOKEN
+        // ===========================
+        public AuthResult ValidarToken(string token)
+        {
+            var valido = _resetSenha.TokenValido(token);
+
+            if (!valido)
+                return new AuthResult(false, "Token inválido ou expirado.", null);
+
+            return new AuthResult(true, "Token válido.", null);
+        }
+
+        // ===========================
+        // RESETAR SENHA
+        // ===========================
+        public AuthResult ResetarSenha(ResetSenhaRequest dto)
+        {
+            var usuarioId = _resetSenha.ObterUsuarioPorToken(dto.Token);
+
+            if (usuarioId == null)
+                return new AuthResult(false, "Token inválido.", null);
+
+            var hash = BCrypt.Net.BCrypt.HashPassword(dto.NovaSenha);
+
+            _usuarios.AlterarSenha(usuarioId.Value, hash);
+            _resetSenha.MarcarTokenComoUsado(dto.Token);
+
+            return new AuthResult(true, "Senha alterada com sucesso!", null);
+        }
+
     }
+
+    
 }

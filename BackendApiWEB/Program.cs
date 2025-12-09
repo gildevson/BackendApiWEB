@@ -16,10 +16,14 @@ builder.Services.AddSingleton<DbContextDapper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPermissaoRepository, PermissaoRepository>();
 
+builder.Services.AddScoped<IResetSenhaRepository, ResetSenhaRepository>();
+
+
 // SERVICES
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPermissaoService, PermissaoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // -----------------------------
 // 🔥 CORS — permite Angular / Electron
@@ -40,7 +44,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
 // -----------------------------

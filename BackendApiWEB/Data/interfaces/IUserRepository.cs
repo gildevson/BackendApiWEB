@@ -5,17 +5,17 @@ namespace BackendApiWEB.Data.Interfaces
 {
     public interface IUserRepository
     {
-        // BÁSICO
-        Usuario? GetByEmail(string email);
         Usuario? GetById(Guid id);
-
-        // CRUD
+        Usuario? GetByEmail(string email);
         bool Create(Usuario usuario);
-        bool Update(Guid id, UsuarioCreateDTO dto);
         bool Delete(Guid id);
 
-        // LISTAGEM
+        // 🔥 MÉTODOS OBRIGATÓRIOS PARA O UserService
+        bool Update(Guid id, UsuarioCreateDTO dto);
         IEnumerable<Usuario> GetPaged(int page, int pageSize);
         int Count();
+
+        // 🔥 Para reset de senha
+        bool AlterarSenha(Guid id, string novaSenhaHash);
     }
 }
