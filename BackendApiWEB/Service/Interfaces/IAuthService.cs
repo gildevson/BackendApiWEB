@@ -5,5 +5,9 @@ namespace BackendApiWEB.Service.Interfaces {
         AuthResult Login(LoginRequest request);
         AuthResult Registrar(RegistrarRequest request);
         AuthResult Delete(Guid id);
+        // 🔥 ADICIONE ESTES 3 MÉTODOS:
+        AuthResult SolicitarResetSenha(ResetSenhaSolicitarRequest dto);
+        AuthResult ValidarToken(string token);
+        AuthResult ResetarSenha(ResetSenhaRequest dto);
     }
 }
