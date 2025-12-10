@@ -7,7 +7,7 @@ namespace BackendApiWEB.Service.Implementations {
         public bool Enviar(string para, string assunto, string corpoHtml) {
             try {
                 var remetente = "gilsonfonseca3000@gmail.com";
-                var senha = "djvjclgcxeqlwbgy"; // senha de app do Gmail
+                var senha = "djvjclgcxeqlwbgy"; // senha de app do Gmail show
 
                 var smtp = new SmtpClient("smtp.gmail.com") {
                     Port = 587,
