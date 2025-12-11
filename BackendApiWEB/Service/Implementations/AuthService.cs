@@ -108,7 +108,7 @@ namespace BackendApiWEB.Service.Implementations
         }
 
         // ===========================
-        // SOLICITAR RESET SENHA
+        // SOLICITAR RESET SENHA.
         // ===========================
         public AuthResult SolicitarResetSenha(ResetSenhaSolicitarRequest dto)
         {
