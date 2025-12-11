@@ -122,7 +122,7 @@ namespace BackendApiWEB.Service.Implementations
 
             _resetSenha.CriarToken(usuario.Id, token, expiracao);
 
-            var link = $"https://seusistema.com/resetar?token={token}";
+            var link = $"http://localhost:4200/redefinirsenha?token={token}";
 
             _email.Enviar(
                 usuario.Email,
