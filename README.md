@@ -491,9 +491,9 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 **Gilson**
 
-- GitHub: [@seu-usuario](https://github.com/gildevson)
-- LinkedIn: [Seu Nome]([https://linkedin.com/in/seu-perfil](https://www.linkedin.com/in/gilson-fonseca-78b6b4138/)
-- Email: seu.email@example.com
+- GitHub: (https://github.com/gildevson)
+- LinkedIn: ((https://www.linkedin.com/in/gilson-fonseca-78b6b4138/)
+- Email: gildevson@gmail.com
 
 
 <div align="center">
