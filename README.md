@@ -444,7 +444,7 @@ Desativa/remove usuário
 
 O frontend deste projeto está disponível em um repositório separado:
 
-**🔗 [Link do Repositório Frontend](https://github.com/seu-usuario/FrontendApp)**
+**🔗 [Link do Repositório Frontend](https://github.com/gildevson/SystemPDVFrontEnd)**
 
 ### Tecnologias do Frontend
 - React / Angular / Vue.js (especifique a sua)
@@ -489,31 +489,12 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 👤 Autor
 
-**Seu Nome**
+**Gilson**
 
-- GitHub: [@seu-usuario](https://github.com/seu-usuario)
-- LinkedIn: [Seu Nome](https://linkedin.com/in/seu-perfil)
+- GitHub: [@seu-usuario](https://github.com/gildevson)
+- LinkedIn: [Seu Nome]([https://linkedin.com/in/seu-perfil](https://www.linkedin.com/in/gilson-fonseca-78b6b4138/)
 - Email: seu.email@example.com
 
----
-
-## 📞 Suporte
-
-Se você tiver alguma dúvida ou problema, por favor:
-
-1. Verifique as [Issues](https://github.com/seu-usuario/BackendApiWEB/issues) existentes
-2. Crie uma nova [Issue](https://github.com/seu-usuario/BackendApiWEB/issues/new) se necessário
-3. Entre em contato pelo email de suporte
-
----
-
-## 🙏 Agradecimentos
-
-- Comunidade .NET
-- Contribuidores do Dapper
-- Todos que contribuíram com feedback e sugestões
-
----
 
 <div align="center">
   
