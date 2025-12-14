@@ -1,4 +1,5 @@
 ﻿using BackendApiWEB.Models;
+using BackendApiWEB.DTOs;
 using System.Data;
 
 namespace BackendApiWEB.Data.Interfaces {
@@ -8,7 +9,7 @@ namespace BackendApiWEB.Data.Interfaces {
         // ===========================
         Usuario? GetById(Guid id);
         Usuario? GetByEmail(string email);
-
+        IEnumerable<UserResponse> GetPagedWithPermissao(int page, int pageSize);
         IEnumerable<Usuario> GetPaged(int page, int pageSize);
         int Count();
 

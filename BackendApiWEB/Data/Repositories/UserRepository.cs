@@ -1,5 +1,6 @@
 ﻿using BackendApiWEB.Data;
 using BackendApiWEB.Data.Interfaces;
+using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
 using Dapper;
 using System.Data;
@@ -41,8 +42,13 @@ namespace BackendApiWEB.Data.Repositories {
         public IEnumerable<Usuario> GetPaged(int page, int pageSize) {
             using var conn = _dapper.CreateConnection();
 
-            string sql = @"
-                SELECT *
+            var sql = @"
+                SELECT 
+                    Id,
+                    Nome,
+                    Email,
+                    SenhaHash,
+                    DataCriacao
                 FROM Usuarios
                 ORDER BY DataCriacao DESC
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
@@ -52,6 +58,59 @@ namespace BackendApiWEB.Data.Repositories {
                 Offset = (page - 1) * pageSize,
                 PageSize = pageSize
             });
+        }
+
+        public IEnumerable<UserResponse> GetPagedWithPermissao(int page, int pageSize) {
+            using var conn = _dapper.CreateConnection();
+
+            var sql = @"
+                WITH UsuariosPaginados AS (
+                    SELECT 
+                        Id,
+                        Nome,
+                        Email,
+                        DataCriacao,
+                        ROW_NUMBER() OVER (ORDER BY DataCriacao DESC) AS RowNum
+                    FROM Usuarios
+                )
+                SELECT 
+                    U.Id,
+                    U.Nome,
+                    U.Email,
+                    U.DataCriacao,
+                    P.Nome AS PermissaoNome
+                FROM UsuariosPaginados U
+                LEFT JOIN UsuarioPermissao UP ON UP.UsuarioId = U.Id
+                LEFT JOIN Permissoes P ON P.Id = UP.PermissaoId
+                WHERE U.RowNum > @Offset AND U.RowNum <= @Offset + @PageSize
+                ORDER BY U.DataCriacao DESC
+            ";
+
+            var userDict = new Dictionary<Guid, UserResponse>();
+
+            conn.Query<UserResponse, string?, UserResponse>(
+                sql,
+                (user, permissao) => {
+                    if (!userDict.TryGetValue(user.Id, out var userEntry)) {
+                        userEntry = user;
+                        userEntry.Permissoes = new List<string>();
+                        userDict.Add(user.Id, userEntry);
+                    }
+
+                    if (!string.IsNullOrEmpty(permissao)) {
+                        ((List<string>)userEntry.Permissoes).Add(permissao);
+                    }
+
+                    return userEntry;
+                },
+                new {
+                    Offset = (page - 1) * pageSize,
+                    PageSize = pageSize
+                },
+                splitOn: "PermissaoNome"
+            );
+
+            return userDict.Values;
         }
 
         public int Count() {
@@ -67,7 +126,7 @@ namespace BackendApiWEB.Data.Repositories {
             using var tran = conn.BeginTransaction();
 
             try {
-                var result = Create(usuario, conn, tran); // chama o método transacional
+                var result = Create(usuario, conn, tran);
                 tran.Commit();
                 return result;
             } catch {
@@ -75,6 +134,7 @@ namespace BackendApiWEB.Data.Repositories {
                 throw;
             }
         }
+
         public bool Update(Usuario usuario) {
             using var conn = _dapper.CreateConnection();
 

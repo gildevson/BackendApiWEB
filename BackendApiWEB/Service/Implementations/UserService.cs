@@ -17,25 +17,18 @@ namespace BackendApiWEB.Service
         // ===============================
         // PAGINAÇÃO
         // ===============================
-        public PaginatedResult<UserResponse> GetPaged(int page, int pageSize)
-        {
-            var data = _repo.GetPaged(page, pageSize);
+        public PaginatedResult<UserResponse> GetPaged(int page, int pageSize) {
+            var data = _repo.GetPagedWithPermissao(page, pageSize);
             var total = _repo.Count();
 
-            return new PaginatedResult<UserResponse>
-            {
+            return new PaginatedResult<UserResponse> {
                 Page = page,
                 PageSize = pageSize,
                 Total = total,
-                Data = data.Select(x => new UserResponse
-                {
-                    Id = x.Id,
-                    Nome = x.Nome,
-                    Email = x.Email,
-                    DataCriacao = x.DataCriacao
-                })
+                Data = data
             };
         }
+
 
         // ===============================
         // BUSCAR POR ID
