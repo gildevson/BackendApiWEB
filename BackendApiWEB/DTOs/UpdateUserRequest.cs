@@ -8,5 +8,7 @@
 
         // Opcional: só troca se vier preenchida
         public string? Senha { get; set; }
+
+        public int? PermissaoId { get; set; }
     }
 }

@@ -203,23 +203,60 @@ namespace BackendApiWEB.Service.Implementations
             if (emailExistente != null && emailExistente.Id != dto.Id)
                 return new AuthResult(false, "Este e-mail já está em uso.", null);
 
-            usuario.Nome = dto.Nome;
-            usuario.Email = dto.Email;
-
-            // Atualiza senha apenas se vier preenchida
+            // Validar senha se vier preenchida
             if (!string.IsNullOrWhiteSpace(dto.Senha)) {
                 if (dto.Senha.Length < 6)
                     return new AuthResult(false, "A senha deve ter no mínimo 6 caracteres.", null);
-
-                usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
             }
 
-            var atualizado = _usuarios.Update(usuario);
+            // ===========================
+            // 🔥 TRANSAÇÃO (para atualizar tudo junto)
+            // ===========================
+            using var conn = _usuarios.GetConnection();
+            conn.Open();
+            using var tran = conn.BeginTransaction();
 
-            if (!atualizado)
-                return new AuthResult(false, "Erro ao atualizar usuário.", null);
+            try {
+                // 1️⃣ Atualizar dados básicos
+                usuario.Nome = dto.Nome;
+                usuario.Email = dto.Email;
 
-            return new AuthResult(true, "Usuário atualizado com sucesso.", null);
+                var atualizado = _usuarios.Update(usuario, conn, tran);
+                if (!atualizado)
+                    throw new Exception("Erro ao atualizar usuário.");
+
+                // 2️⃣ Atualizar senha (se fornecida)
+                if (!string.IsNullOrWhiteSpace(dto.Senha)) {
+                    usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+                    var senhaAtualizada = _usuarios.AlterarSenha(usuario.Id, usuario.SenhaHash, conn, tran);
+                    if (!senhaAtualizada)
+                        throw new Exception("Erro ao atualizar senha.");
+                }
+
+                // 3️⃣ Atualizar permissão (se fornecida)
+                if (dto.PermissaoId.HasValue) {
+                    // Remover permissões antigas
+                    var removido = _permissoes.RemoveAllPermissions(usuario.Id, conn, tran);
+
+                    // Adicionar nova permissão
+                    var permissaoAdicionada = _permissoes.AddPermission(
+                        usuario.Id,
+                        dto.PermissaoId.Value,
+                        conn,
+                        tran
+                    );
+
+                    if (!permissaoAdicionada)
+                        throw new Exception("Erro ao atualizar permissão.");
+                }
+
+                tran.Commit();
+                return new AuthResult(true, "Usuário atualizado com sucesso.", null);
+
+            } catch (Exception ex) {
+                tran.Rollback();
+                return new AuthResult(false, $"Erro ao atualizar: {ex.Message}", null);
+            }
         }
 
     }
