@@ -5,6 +5,7 @@ using BackendApiWEB.Service;
 using BackendApiWEB.Service.Implementations;
 using BackendApiWEB.Service.Interfaces;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // -----------------------------
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<DbContextDapper>();
 
 // REPOSITORIES
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPermissaoRepository, PermissaoRepository>();
 
 builder.Services.AddScoped<IResetSenhaRepository, ResetSenhaRepository>();
@@ -28,10 +29,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // -----------------------------
 // 🔥 CORS — permite Angular / Electron
 // -----------------------------
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("DevCors", policy =>
-    {
+builder.Services.AddCors(options => {
+    options.AddPolicy("DevCors", policy => {
         policy
             .WithOrigins("http://localhost:4200", "http://localhost")
             .AllowAnyHeader()
@@ -49,8 +48,7 @@ var app = builder.Build();
 // -----------------------------
 // 🔥 SWAGGER EM DEV
 // -----------------------------
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }

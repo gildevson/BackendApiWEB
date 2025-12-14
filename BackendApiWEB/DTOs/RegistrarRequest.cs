@@ -10,6 +10,8 @@ namespace BackendApiWEB.DTOs {
 
         [Required, MinLength(6)]
         public string Senha { get; set; }
+
+        public int? PermissaoId { get; set; }
     }
 
 

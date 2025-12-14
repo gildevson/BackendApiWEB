@@ -52,28 +52,23 @@ namespace BackendApiWEB.Service.Implementations
         // ===========================
         // REGISTRAR
         // ===========================
-        public AuthResult Registrar(RegistrarRequest dto)
-        {
+        public AuthResult Registrar(RegistrarRequest dto) {
+            // ===========================
+            // VALIDAÇÕES
+            // ===========================
             if (string.IsNullOrWhiteSpace(dto.Nome) ||
                 string.IsNullOrWhiteSpace(dto.Email) ||
                 string.IsNullOrWhiteSpace(dto.Senha))
-            {
                 return new AuthResult(false, "Todos os campos são obrigatórios.", null);
-            }
+
+            if (dto.Senha.Length < 6)
+                return new AuthResult(false, "A senha deve ter no mínimo 6 caracteres.", null);
 
             var existente = _usuarios.GetByEmail(dto.Email);
             if (existente != null)
-            {
                 return new AuthResult(false, "Este email já está cadastrado.", null);
-            }
 
-            if (dto.Senha.Length < 6)
-            {
-                return new AuthResult(false, "A senha deve ter no mínimo 6 caracteres.", null);
-            }
-
-            var novoUsuario = new Usuario
-            {
+            var novoUsuario = new Usuario {
                 Id = Guid.NewGuid(),
                 Nome = dto.Nome,
                 Email = dto.Email,
@@ -81,12 +76,45 @@ namespace BackendApiWEB.Service.Implementations
                 DataCriacao = DateTime.Now
             };
 
-            var criado = _usuarios.Create(novoUsuario);
+            // ===========================
+            // 🔥 TRANSAÇÃO
+            // ===========================
+            using var conn = _usuarios.GetConnection(); // 👈 explico abaixo
+            conn.Open();
 
-            if (!criado)
-                return new AuthResult(false, "Erro ao criar usuário.", null);
+            using var tran = conn.BeginTransaction();
 
-            return new AuthResult(true, "Usuário criado com sucesso!", null);
+            try {
+                var criado = _usuarios.Create(novoUsuario, conn, tran);
+                if (!criado)
+                    throw new Exception("Erro ao criar usuário.");
+
+                bool permissaoCriada;
+
+                if (dto.PermissaoId.HasValue) {
+                    permissaoCriada = _permissoes.AddPermission(
+                        novoUsuario.Id,
+                        dto.PermissaoId.Value,
+                        conn,
+                        tran
+                    );
+                } else {
+                    permissaoCriada = _permissoes.AddDefaultPermission(
+                        novoUsuario.Id,
+                        conn,
+                        tran
+                    );
+                }
+
+                if (!permissaoCriada)
+                    throw new Exception("Erro ao vincular permissão.");
+
+                tran.Commit();
+                return new AuthResult(true, "Usuário criado com sucesso!", null);
+            } catch {
+                tran.Rollback();
+                throw;
+            }
         }
 
         // ===========================

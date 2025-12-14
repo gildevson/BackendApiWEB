@@ -1,112 +1,146 @@
 ﻿using BackendApiWEB.Data;
 using BackendApiWEB.Data.Interfaces;
-using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
 using Dapper;
+using System.Data;
 
-namespace BackendApiWEB.Data.Repositories
-{
-    public class UserRepository : IUserRepository
-    {
+namespace BackendApiWEB.Data.Repositories {
+    public class UsuarioRepository : IUserRepository {
         private readonly DbContextDapper _dapper;
 
-        public UserRepository(DbContextDapper dapper)
-        {
+        public UsuarioRepository(DbContextDapper dapper) {
             _dapper = dapper;
         }
 
-        public Usuario? GetByEmail(string email)
-        {
-            const string sql = "SELECT * FROM Usuarios WHERE Email = @email";
-            using var conn = _dapper.CreateConnection();
-            return conn.QueryFirstOrDefault<Usuario>(sql, new { email });
+        // ===========================
+        // 🔗 CONEXÃO
+        // ===========================
+        public IDbConnection GetConnection() {
+            return _dapper.CreateConnection();
         }
 
-        public Usuario? GetById(Guid id)
-        {
-            const string sql = "SELECT * FROM Usuarios WHERE Id = @id";
+        // ===========================
+        // CONSULTAS
+        // ===========================
+        public Usuario? GetById(Guid id) {
             using var conn = _dapper.CreateConnection();
-            return conn.QueryFirstOrDefault<Usuario>(sql, new { id });
+            return conn.QueryFirstOrDefault<Usuario>(
+                "SELECT * FROM Usuarios WHERE Id = @Id",
+                new { Id = id }
+            );
         }
 
-        public bool Create(Usuario usuario)
-        {
-            const string sql = @"
-                INSERT INTO Usuarios (Id, Nome, Email, SenhaHash, DataCriacao)
-                VALUES (@Id, @Nome, @Email, @SenhaHash, @DataCriacao)";
-
+        public Usuario? GetByEmail(string email) {
             using var conn = _dapper.CreateConnection();
-            return conn.Execute(sql, usuario) > 0;
+            return conn.QueryFirstOrDefault<Usuario>(
+                "SELECT * FROM Usuarios WHERE Email = @Email",
+                new { Email = email }
+            );
         }
 
-        public bool Update(Guid id, UsuarioCreateDTO dto)
-        {
-            const string sql = @"
-                UPDATE Usuarios
-                SET Nome = @Nome, Email = @Email
-                WHERE Id = @Id";
-
+        public IEnumerable<Usuario> GetPaged(int page, int pageSize) {
             using var conn = _dapper.CreateConnection();
-            return conn.Execute(sql, new { Id = id, dto.Nome, dto.Email }) > 0;
-        }
 
-        public bool Delete(Guid id)
-        {
-            const string sql = "DELETE FROM Usuarios WHERE Id = @Id";
-            using var conn = _dapper.CreateConnection();
-            return conn.Execute(sql, new { Id = id }) > 0;
-        }
-
-        public IEnumerable<Usuario> GetPaged(int page, int pageSize)
-        {
-            int skip = (page - 1) * pageSize;
-
-            const string sql = @"
+            string sql = @"
                 SELECT *
                 FROM Usuarios
                 ORDER BY DataCriacao DESC
-                OFFSET @skip ROWS FETCH NEXT @pageSize ROWS ONLY";
-
-            using var conn = _dapper.CreateConnection();
-            return conn.Query<Usuario>(sql, new { skip, pageSize });
-        }
-
-        public int Count()
-        {
-            const string sql = "SELECT COUNT(*) FROM Usuarios";
-            using var conn = _dapper.CreateConnection();
-            return conn.ExecuteScalar<int>(sql);
-        }
-
-        // 🔥 IMPLEMENTAÇÃO FINAL DO RESET DE SENHA
-        public bool AlterarSenha(Guid id, string novaSenhaHash)
-        {
-            const string sql = @"
-                UPDATE Usuarios
-                SET SenhaHash = @SenhaHash
-                WHERE Id = @Id;
+                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
             ";
 
-            using var conn = _dapper.CreateConnection();
-
-            int linhas = conn.Execute(sql, new { Id = id, SenhaHash = novaSenhaHash });
-
-            return linhas > 0;
+            return conn.Query<Usuario>(sql, new {
+                Offset = (page - 1) * pageSize,
+                PageSize = pageSize
+            });
         }
 
-        public bool Update(Usuario usuario) {
-            const string sql = @"
-        UPDATE Usuarios
-        SET Nome = @Nome,
-            Email = @Email,
-            SenhaHash = @SenhaHash
-        WHERE Id = @Id
-    ";
-
+        public int Count() {
             using var conn = _dapper.CreateConnection();
-            var rows = conn.Execute(sql, usuario);
+            return conn.ExecuteScalar<int>("SELECT COUNT(*) FROM Usuarios");
+        }
 
-            return rows > 0;
+        // ===========================
+        // OPERAÇÕES SIMPLES (LEGADAS)
+        // ===========================
+        public bool Create(Usuario usuario) {
+            using var conn = _dapper.CreateConnection();
+            using var tran = conn.BeginTransaction();
+
+            try {
+                var result = Create(usuario, conn, tran); // chama o método transacional
+                tran.Commit();
+                return result;
+            } catch {
+                tran.Rollback();
+                throw;
+            }
+        }
+        public bool Update(Usuario usuario) {
+            using var conn = _dapper.CreateConnection();
+
+            string sql = @"
+                UPDATE Usuarios
+                SET Nome = @Nome,
+                    Email = @Email
+                WHERE Id = @Id
+            ";
+
+            return conn.Execute(sql, usuario) > 0;
+        }
+
+        public bool Delete(Guid id) {
+            using var conn = _dapper.CreateConnection();
+            return conn.Execute(
+                "DELETE FROM Usuarios WHERE Id = @Id",
+                new { Id = id }
+            ) > 0;
+        }
+
+        public bool AlterarSenha(Guid id, string novaSenhaHash) {
+            using var conn = _dapper.CreateConnection();
+            return conn.Execute(
+                "UPDATE Usuarios SET SenhaHash = @SenhaHash WHERE Id = @Id",
+                new { Id = id, SenhaHash = novaSenhaHash }
+            ) > 0;
+        }
+
+        // ===========================
+        // 🔥 OPERAÇÕES COM TRANSAÇÃO
+        // ===========================
+        public bool Create(Usuario usuario, IDbConnection conn, IDbTransaction tran) {
+            string sql = @"
+                INSERT INTO Usuarios (Id, Nome, Email, SenhaHash, DataCriacao)
+                VALUES (@Id, @Nome, @Email, @SenhaHash, @DataCriacao)
+            ";
+
+            return conn.Execute(sql, usuario, tran) > 0;
+        }
+
+        public bool Update(Usuario usuario, IDbConnection conn, IDbTransaction tran) {
+            string sql = @"
+                UPDATE Usuarios
+                SET Nome = @Nome,
+                    Email = @Email
+                WHERE Id = @Id
+            ";
+
+            return conn.Execute(sql, usuario, tran) > 0;
+        }
+
+        public bool Delete(Guid id, IDbConnection conn, IDbTransaction tran) {
+            return conn.Execute(
+                "DELETE FROM Usuarios WHERE Id = @Id",
+                new { Id = id },
+                tran
+            ) > 0;
+        }
+
+        public bool AlterarSenha(Guid id, string novaSenhaHash, IDbConnection conn, IDbTransaction tran) {
+            return conn.Execute(
+                "UPDATE Usuarios SET SenhaHash = @SenhaHash WHERE Id = @Id",
+                new { Id = id, SenhaHash = novaSenhaHash },
+                tran
+            ) > 0;
         }
     }
 }
