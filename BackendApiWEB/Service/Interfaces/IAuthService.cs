@@ -9,5 +9,8 @@ namespace BackendApiWEB.Service.Interfaces {
         AuthResult SolicitarResetSenha(ResetSenhaSolicitarRequest dto);
         AuthResult ValidarToken(string token);
         AuthResult ResetarSenha(ResetSenhaRequest dto);
+
+        AuthResult Update(UpdateUserRequest request);
+
     }
 }

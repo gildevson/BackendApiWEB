@@ -93,5 +93,20 @@ namespace BackendApiWEB.Data.Repositories
 
             return linhas > 0;
         }
+
+        public bool Update(Usuario usuario) {
+            const string sql = @"
+        UPDATE Usuarios
+        SET Nome = @Nome,
+            Email = @Email,
+            SenhaHash = @SenhaHash
+        WHERE Id = @Id
+    ";
+
+            using var conn = _dapper.CreateConnection();
+            var rows = conn.Execute(sql, usuario);
+
+            return rows > 0;
+        }
     }
 }

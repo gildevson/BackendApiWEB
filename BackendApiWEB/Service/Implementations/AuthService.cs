@@ -164,6 +164,36 @@ namespace BackendApiWEB.Service.Implementations
             return new AuthResult(true, "Senha alterada com sucesso!", null);
         }
 
+        public AuthResult Update(UpdateUserRequest dto) {
+            var usuario = _usuarios.GetById(dto.Id);
+
+            if (usuario == null)
+                return new AuthResult(false, "Usuário não encontrado.", null);
+
+            // Verifica se o email já existe em outro usuário
+            var emailExistente = _usuarios.GetByEmail(dto.Email);
+            if (emailExistente != null && emailExistente.Id != dto.Id)
+                return new AuthResult(false, "Este e-mail já está em uso.", null);
+
+            usuario.Nome = dto.Nome;
+            usuario.Email = dto.Email;
+
+            // Atualiza senha apenas se vier preenchida
+            if (!string.IsNullOrWhiteSpace(dto.Senha)) {
+                if (dto.Senha.Length < 6)
+                    return new AuthResult(false, "A senha deve ter no mínimo 6 caracteres.", null);
+
+                usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+            }
+
+            var atualizado = _usuarios.Update(usuario);
+
+            if (!atualizado)
+                return new AuthResult(false, "Erro ao atualizar usuário.", null);
+
+            return new AuthResult(true, "Usuário atualizado com sucesso.", null);
+        }
+
     }
 
     

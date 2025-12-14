@@ -99,9 +99,20 @@ namespace BackendApiWEB.Service
         // ===============================
         // ATUALIZAR
         // ===============================
-        public bool Update(Guid id, UsuarioCreateDTO dto)
-        {
-            return _repo.Update(id, dto);
+        public bool Update(Guid id, UsuarioCreateDTO dto) {
+            var usuario = _repo.GetById(id);
+
+            if (usuario == null)
+                return false;
+
+            usuario.Nome = dto.Nome;
+            usuario.Email = dto.Email;
+
+            if (!string.IsNullOrWhiteSpace(dto.Senha))
+                usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+
+            return _repo.Update(usuario);
         }
+
     }
 }

@@ -47,6 +47,21 @@ namespace BackendApiWEB.Controllers {
 
             return Ok(new { mensagem = result.Mensagem });
         }
-        
+
+        // UPDATE USUÁRIO
+        [HttpPut]
+        public IActionResult Update([FromBody] UpdateUserRequest dto) {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _auth.Update(dto);
+
+            if (!result.Sucesso)
+                return BadRequest(new { mensagem = result.Mensagem });
+
+            return Ok(new { mensagem = result.Mensagem });
+        }
+
+
     }
 }
