@@ -66,5 +66,5 @@ app.UseCors("DevCors");
 // Controllers
 app.MapControllers();
 var email = new EmailService();
-email.Enviar("gildevson@gmail.com", "Teste", "<h1>Funcionou!</h1>");
+//email.Enviar("gildevson@gmail.com", "Teste", "<h1>Funcionou!</h1>");
 app.Run();
