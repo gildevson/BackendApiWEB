@@ -28,8 +28,7 @@ namespace BackendApiWEB.Service.Implementations
         // ===========================
         // LOGIN
         // ===========================
-        public AuthResult Login(LoginRequest request)
-        {
+        public AuthResult Login(LoginRequest request) {
             var usuario = _usuarios.GetByEmail(request.Email);
 
             if (usuario == null)
@@ -38,16 +37,23 @@ namespace BackendApiWEB.Service.Implementations
             if (!BCrypt.Net.BCrypt.Verify(request.Senha, usuario.SenhaHash))
                 return new AuthResult(false, "Senha incorreta.", null);
 
-            var userResponse = new UserResponse
-            {
+            // ✅ BUSCAR E TRANSFORMAR EM NOMES (TIPO)
+            var permissoes = _permissoes
+                .GetByUsuario(usuario.Id)
+                .Select(p => p.Nome)
+                .ToList();
+
+            var userResponse = new UserResponse {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
                 Email = usuario.Email,
-                DataCriacao = usuario.DataCriacao
+                DataCriacao = usuario.DataCriacao,
+                Permissoes = permissoes
             };
 
             return new AuthResult(true, "Login realizado com sucesso!", userResponse);
         }
+
 
         // ===========================
         // REGISTRAR
@@ -120,21 +126,21 @@ namespace BackendApiWEB.Service.Implementations
         // ===========================
         // DELETE
         // ===========================
-        public AuthResult Delete(Guid id)
-        {
-            var user = _usuarios.GetById(id);
+        public AuthResult Delete(Guid id, Guid idLogado) {
+            // ✅ regra: não pode excluir a si mesmo
+            if (id == idLogado)
+                return new AuthResult(false, "Você não pode excluir o seu próprio usuário.", null);
 
+            var user = _usuarios.GetById(id);
             if (user == null)
                 return new AuthResult(false, "Usuário não encontrado.", null);
 
             var deleted = _usuarios.Delete(id);
-
             if (!deleted)
                 return new AuthResult(false, "Erro ao deletar usuário.", null);
 
             return new AuthResult(true, "Usuário deletado com sucesso.", null);
         }
-
         // ===========================
         // SOLICITAR RESET SENHA.
         // ===========================
