@@ -1,6 +1,6 @@
 CREATE TABLE dbo.Pessoas (
     Id           INT IDENTITY(1,1) PRIMARY KEY,
-    TipoPessoa   VARCHAR(30) NOT NULL,      -- CLIENTE / REPRESENTANTE
+    TipoPessoa   VARCHAR(30) NOT NULL,      -- CLIENTE / FORNECEDOR
 
     CpfCnpj      VARCHAR(20) NOT NULL,
     RazaoSocial  VARCHAR(200) NOT NULL,

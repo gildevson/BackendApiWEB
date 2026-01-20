@@ -1,6 +1,6 @@
 ﻿namespace SeuProjeto.Models;
 
-public class ClienteRepresentante {
+public class ClienteFornecedor {
     public int ClienteId { get; set; }
-    public int RepresentanteId { get; set; }
+    public int FornecedorId { get; set; }
 }

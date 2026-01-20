@@ -1,7 +1,7 @@
 ﻿namespace BackendApiWEB.Models {
     public class Pessoa {
         public int Id { get; set; }
-        public string TipoPessoa { get; set; } = ""; // CLIENTE / REPRESENTANTE
+        public string TipoPessoa { get; set; } = ""; // CLIENTE / FORNECEDOR
 
         public string CpfCnpj { get; set; } = "";
         public string RazaoSocial { get; set; } = "";
