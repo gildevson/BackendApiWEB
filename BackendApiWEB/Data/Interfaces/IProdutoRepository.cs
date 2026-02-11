@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using BackendApiWEB.Models;
 
 namespace BackendApiWEB.Data.Interfaces {
     public interface IProdutoRepository {
