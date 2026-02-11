@@ -1,8 +1,6 @@
 ﻿using BackendApiWEB.Models;
 using System.Data;
 
-using BackendApiWEB.Models;
-using System.Data;
 
 namespace BackendApiWEB.Data.Interfaces {
     public interface IPermissaoRepository {
