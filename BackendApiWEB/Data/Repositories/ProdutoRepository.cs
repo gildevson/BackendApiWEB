@@ -25,12 +25,12 @@ namespace BackendApiWEB.Data.Repositories {
         public int insert(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
             => conn.ExecuteScalar<int>(
                 @"INSERT INTO dbo.Produtos (Nome, Descricao, Preco, Estoque, Ativo, CriadoEm) VALUES (@Nome, @Descricao, @Preco, @Estoque, @Ativo, @CriadoEm); SELECT CAST(SCOPE_IDENTITY() as int)",
-                new { p.Nome, p.Descricao, p.Preco, p.Estoque.Length, p.Ativo }, tran);
+                new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo }, tran);
 
         public bool Update(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
             => conn.Execute(
                 @"UPDATE dbo.Produtos SET Nome = @Nome, Descricao = @Descricao, Preco = @Preco, Estoque = @Estoque, Ativo = @Ativo, AtualizadoEm = @AtualizadoEm WHERE id = @id",
-                new { p.Nome, p.Descricao, p.Preco, p.Estoque.Length, p.Ativo, p.AtualizadoEm, p.id }, tran) > 0;
+                new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo, p.AtualizadoEm, p.id }, tran) > 0;
 
         public bool Delete(int id, IDbConnection conn, IDbTransaction ? tran = null)
             => conn.Execute(@"DELETE FROM dbo.Produtos WHERE id=@id", new { id}, tran) > 0;
