@@ -34,7 +34,7 @@ namespace BackendApiWEB.Controllers {
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult Delete(int id) {
+        public IActionResult Delete(int id) { //
             var ok = _service.Delete(id);
             return ok ? NoContent() : NotFound();
         }
