@@ -1,14 +1,13 @@
 ﻿using BackendApiWEB.DTOs;
 using BackendApiWEB.Models;
-
+using System.Collections.Generic;
 
 namespace BackendApiWEB.Service.Interfaces {
-    public class IProdutoService {
-        Produto? GetById(int id); // Obter um produto por ID
-        IEnumerable<Produto> ListAll(); // Listar todos os produtos
-        int Create(ProdutoCreateDTO produtoDto); // Criar um novo produto
-        bool Update(int id, ProdutoUpdateDTO produtoDto); // Atualizar um produto existente
-        bool Delete(int id); // Excluir um produto por ID
-
+    public interface IProdutoService {
+        Produtos? GetById(int id);
+        IEnumerable<Produtos> ListAll();
+        int Create(ProdutoCreateRequest dto);
+        bool Update(int id, ProdutoCreateRequest dto);
+        bool Delete(int id);
     }
 }
