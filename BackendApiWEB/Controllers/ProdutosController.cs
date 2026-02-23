@@ -2,18 +2,22 @@
 using BackendApiWEB.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BackendApiWEB.Controllers {
+namespace BackendApiWEB.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
-    public class ProdutosController : ControllerBase {
+    public class ProdutosController : ControllerBase
+    {
         private readonly IProdutoService _service;
 
-        public ProdutosController(IProdutoService service) {
+        public ProdutosController(IProdutoService service)
+        {
             _service = service;
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id) {
+        public IActionResult Get(int id)
+        {
             var p = _service.GetById(id);
             return p is null ? NotFound() : Ok(p);
         }
@@ -22,7 +26,8 @@ namespace BackendApiWEB.Controllers {
         public IActionResult List() => Ok(_service.ListAll());
 
         [HttpPost]
-        public IActionResult Create([FromBody] ProdutoCreateRequest dto) {
+        public IActionResult Create([FromBody] ProdutoCreateRequest dto)
+        {
             if (string.IsNullOrWhiteSpace(dto.Nome) || dto.Preco < 0)
                 return BadRequest("Dados inválidos");
 
@@ -31,15 +36,18 @@ namespace BackendApiWEB.Controllers {
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult Update(int id, [FromBody] ProdutoCreateRequest dto) {
+        public IActionResult Update(int id, [FromBody] ProdutoCreateRequest dto)
+        {
             var ok = _service.Update(id, dto);
             return ok ? NoContent() : NotFound();
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult Delete(int id) {
+        public IActionResult Delete(int id)
+        {
             var ok = _service.Delete(id);
             return ok ? NoContent() : NotFound();
         }
     }
 }
+
