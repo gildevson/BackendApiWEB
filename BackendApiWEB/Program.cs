@@ -16,11 +16,12 @@ builder.Services.AddSingleton<DbContextDapper>();
 // REPOSITORIES
 builder.Services.AddScoped<IUserRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPermissaoRepository, PermissaoRepository>();
-
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IResetSenhaRepository, ResetSenhaRepository>();
 
 
 // SERVICES
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPermissaoService, PermissaoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
