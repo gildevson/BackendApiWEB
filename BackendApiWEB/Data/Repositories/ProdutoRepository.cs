@@ -35,28 +35,5 @@ namespace BackendApiWEB.Data.Repositories {
         public bool Delete(int id, IDbConnection conn, IDbTransaction ? tran = null)
             => conn.Execute(@"DELETE FROM dbo.Produtos WHERE id=@id", new { id}, tran) > 0;
 
-        IDbConnection IProdutoRepository.GetConnection() {
-            throw new NotImplementedException();
-        }
-
-        Produtos? IProdutoRepository.GetById(int id) {
-            throw new NotImplementedException();
-        }
-
-        int IProdutoRepository.Insert(Produtos produto, IDbConnection conn, IDbTransaction? tran) {
-            throw new NotImplementedException();
-        }
-
-        bool IProdutoRepository.Update(Produtos produto, IDbConnection conn, IDbTransaction? tran) {
-            throw new NotImplementedException();
-        }
-
-        bool IProdutoRepository.Delete(int id, IDbConnection conn, IDbTransaction? tran) {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<Produtos> IProdutoRepository.ListAll() {
-            throw new NotImplementedException();
-        }
     }
 }
