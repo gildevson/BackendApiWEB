@@ -12,7 +12,7 @@ namespace BackendApiWEB.Service.Implementations {
             _repo = repo ?? throw new ArgumentNullException(nameof(repo));
         }
 
-        public Produtos? GetById(int id) {
+        public Produtos? GetById(Guid id) {
             return _repo.GetById(id);
         }
 
@@ -44,10 +44,11 @@ namespace BackendApiWEB.Service.Implementations {
             }
         }
 
-        public bool Update(int id, ProdutoCreateRequest dto) {
+        public bool Update(Guid id, ProdutoCreateRequest dto) {
             var existing = _repo.GetById(id);
             if (existing == null) return false;
 
+            existing.Id = Guid.NewGuid();
             existing.Nome = dto.Nome;
             existing.Descricao = dto.Descricao;
             existing.Preco = dto.Preco;
@@ -68,7 +69,7 @@ namespace BackendApiWEB.Service.Implementations {
             }
         }
 
-        public bool Delete(int id) {
+        public bool Delete(Guid id) {
             using var conn = _repo.GetConnection();
             conn.Open();
             using var tran = conn.BeginTransaction();
@@ -80,6 +81,10 @@ namespace BackendApiWEB.Service.Implementations {
                 tran.Rollback();
                 throw;
             }
+        }
+
+        public bool Update(int id, ProdutoCreateRequest dto) {
+            throw new NotImplementedException();
         }
     }
 }

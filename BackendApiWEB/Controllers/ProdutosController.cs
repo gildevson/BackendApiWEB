@@ -16,7 +16,7 @@ namespace BackendApiWEB.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(Guid id)
         {
             var p = _service.GetById(id);
             return p is null ? NotFound() : Ok(p);
@@ -36,14 +36,14 @@ namespace BackendApiWEB.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult Update(int id, [FromBody] ProdutoCreateRequest dto)
+        public IActionResult Update(Guid id, [FromBody] ProdutoCreateRequest dto)
         {
             var ok = _service.Update(id, dto);
             return ok ? NoContent() : NotFound();
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(Guid id)
         {
             var ok = _service.Delete(id);
             return ok ? NoContent() : NotFound();

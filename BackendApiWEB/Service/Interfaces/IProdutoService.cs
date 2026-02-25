@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace BackendApiWEB.Service.Interfaces {
     public interface IProdutoService {
-        Produtos? GetById(int id);
+        Produtos? GetById(Guid id);
         IEnumerable<Produtos> ListAll();
         int Create(ProdutoCreateRequest dto);
-        bool Update(int id, ProdutoCreateRequest dto);
-        bool Delete(int id);
+        bool Update(Guid id, ProdutoCreateRequest dto);
+        bool Delete(Guid id);
     }
 }
