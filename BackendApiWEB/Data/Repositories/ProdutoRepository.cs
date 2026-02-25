@@ -23,8 +23,9 @@ namespace BackendApiWEB.Data.Repositories {
 
         public int Insert(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
             => conn.ExecuteScalar<int>(
-                @"INSERT INTO dbo.Produtos (Nome, Descricao, Preco, Estoque, Ativo, CriadoEm) VALUES (@Nome, @Descricao, @Preco, @Estoque, @Ativo, @CriadoEm); SELECT CAST(SCOPE_IDENTITY() as int)",
-                new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo }, tran);
+                @"INSERT INTO dbo.Produtos (Nome, Descricao, Preco, Estoque, Ativo, CriadoEm) 
+                VALUES (@Nome, @Descricao, @Preco, @Estoque, @Ativo, @CriadoEm); SELECT CAST(SCOPE_IDENTITY() as int)",
+                new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo, p.CriadoEm }, tran);
 
         public bool Update(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
             => conn.Execute(

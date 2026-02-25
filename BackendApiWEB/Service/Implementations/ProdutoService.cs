@@ -22,6 +22,7 @@ namespace BackendApiWEB.Service.Implementations {
 
         public int Create(ProdutoCreateRequest dto) {
             var p = new Produtos {
+                Id = Guid.NewGuid(),
                 Nome = dto.Nome,
                 Descricao = dto.Descricao,
                 Preco = dto.Preco,
