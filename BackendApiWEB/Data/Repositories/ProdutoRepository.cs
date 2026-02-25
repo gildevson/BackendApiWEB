@@ -8,7 +8,6 @@ using BackendApiWEB.Data.Interfaces;
 namespace BackendApiWEB.Data.Repositories {
     public class ProdutoRepository : IProdutoRepository {
 
-
         private readonly IDbConnection _conn;
         public ProdutoRepository(IDbConnection conn) => _conn = conn; // NÃO SEI QUE ISSO SIGIFCA MAS É O CONSTRUTOR DA CLASSE, ELE RECEBE UM IDbConnection E ATRIBUI A VARIÁVEL _conn
 
@@ -22,7 +21,7 @@ namespace BackendApiWEB.Data.Repositories {
             => _conn.Query<Produtos>
             (@"SELECT id, Nome, Descricao, Preco, Estoque, Ativo, CriadoEm, AtualizadoEm FROM dbo.Produtos");
 
-        public int insert(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
+        public int Insert(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
             => conn.ExecuteScalar<int>(
                 @"INSERT INTO dbo.Produtos (Nome, Descricao, Preco, Estoque, Ativo, CriadoEm) VALUES (@Nome, @Descricao, @Preco, @Estoque, @Ativo, @CriadoEm); SELECT CAST(SCOPE_IDENTITY() as int)",
                 new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo }, tran);
