@@ -13,7 +13,7 @@ namespace BackendApiWEB.Data.Repositories {
 
         public IDbConnection GetConnection() => _conn;
 
-        public Produtos? GetById(Guid id) // esse aqui é basicamente o método para pegar um produto pelo id, ele retorna um objeto do tipo Produtos ou null se não encontrar, ele usa o Dapper para executar a query SQL e mapear o resultado para o objeto Produtos
+        public Produtos? GetById(Guid id) // esse aqui é basicamente o método para pegar um produto pelo guid id, ele retorna um objeto do tipo Produtos ou null se não encontrar, ele usa o Dapper para executar a query SQL e mapear o resultado para o objeto Produtos
             => _conn.QueryFirstOrDefault<Produtos>
             (@"SELECT id, Nome, Descricao, Preco, Estoque, Ativo, CriadoEm, AtualizadoEm FROM dbo.Produtos Where id = @id", new { id });
 
