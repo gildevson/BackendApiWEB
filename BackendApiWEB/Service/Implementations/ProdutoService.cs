@@ -20,7 +20,7 @@ namespace BackendApiWEB.Service.Implementations {
             return _repo.ListAll();
         }
 
-        public int Create(ProdutoCreateRequest dto) {
+        public Guid Create(ProdutoCreateRequest dto) {
             var p = new Produtos {
                 Id = Guid.NewGuid(),
                 Nome = dto.Nome,
@@ -48,7 +48,7 @@ namespace BackendApiWEB.Service.Implementations {
             var existing = _repo.GetById(id);
             if (existing == null) return false;
 
-            existing.Id = Guid.NewGuid();
+            
             existing.Nome = dto.Nome;
             existing.Descricao = dto.Descricao;
             existing.Preco = dto.Preco;
