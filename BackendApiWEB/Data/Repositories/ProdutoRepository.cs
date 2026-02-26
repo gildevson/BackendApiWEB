@@ -25,7 +25,7 @@ namespace BackendApiWEB.Data.Repositories {
             => conn.ExecuteScalar<int>(
                 @"INSERT INTO dbo.Produtos (Nome, Descricao, Preco, Estoque, Ativo, CriadoEm) 
                 VALUES (@Nome, @Descricao, @Preco, @Estoque, @Ativo, @CriadoEm); SELECT CAST(SCOPE_IDENTITY() as int)",
-                new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo, p.CriadoEm }, tran);
+                new { p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo, p.CriadoEm, p.Id }, tran);
 
         public bool Update(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
             => conn.Execute(
