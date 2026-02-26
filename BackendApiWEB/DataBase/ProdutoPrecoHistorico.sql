@@ -1,6 +1,6 @@
 CREATE TABLE dbo.ProdutoPrecoHistorico (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    ProdutoId INT NOT NULL,
+    ProdutoId UNIQUEIDENTIFIER NOT NULL,
     Preco DECIMAL(18,2) NOT NULL,
     VigenciaInicio DATETIME2 NOT NULL,
     VigenciaFim DATETIME2 NULL,
