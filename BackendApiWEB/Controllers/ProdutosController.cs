@@ -15,7 +15,7 @@ namespace BackendApiWEB.Controllers
             _service = service;
         }
 
-        [HttpGet("{id:guid}")]
+        [HttpGet("{id:guid}")] // 
         public IActionResult Get(Guid id)
         {
             var p = _service.GetById(id);
