@@ -3,16 +3,16 @@
     public class Cliente
     {
         Guid id { get; set; }
-        string nome { get; set; }
-        string cnpjcpf { get; set; }
-        string cep { get; set; }
-        string cidade { get; set; }
-        string endereco { get; set; }
-        string bairro { get; set; }
-        string Numero { get; set; }
-        string complemento { get; set; }
-        string Estado { get; set; } 
-        DateTime dataCadastro { get; set; }
-
+        public string nome { get; set; }
+        public string cnpjcpf { get; set; }
+        public string cep { get; set; }
+        public string cidade { get; set; }
+        public string endereco { get; set; }
+        public string bairro { get; set; }
+        public string Numero { get; set; }
+        public string complemento { get; set; }
+        public string Estado { get; set; } 
+        public DateTime dataCadastro { get; set; }
+        public bool Ativo { get; set; } = true;
     }
 }
