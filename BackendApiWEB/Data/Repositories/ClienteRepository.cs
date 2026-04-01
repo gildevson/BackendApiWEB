@@ -14,7 +14,6 @@ namespace BackendApiWEB.Data.Repositories
 
         public IDbConnection GetConnection() => _conn;
 
-        public Clientes? GetClientes(Guid id) =>
-            -_conn.QueryFirstOrDefault<Clientes>
+        public Clientes? GetClientes(Guid id) => _conn.QueryFirstOrDefault<Clientes>
     }
 }
