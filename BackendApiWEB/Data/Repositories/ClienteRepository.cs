@@ -7,7 +7,8 @@ using BackendApiWEB.Data.Interfaces;
 
 namespace BackendApiWEB.Data.Repositories
 {
-    public class ClienteRepository : IClienteRepository {
+    public class ClienteRepository : IClienteRepository
+    {
         private readonly IDbConnection _conn;
 
         public ClienteRepository(IDbConnection conn) => _conn = conn;
