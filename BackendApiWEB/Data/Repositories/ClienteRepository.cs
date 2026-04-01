@@ -7,13 +7,13 @@ using BackendApiWEB.Data.Interfaces;
 
 namespace BackendApiWEB.Data.Repositories
 {
-    public class ClienteRepository : IProdutoRepository {
+    public class ClienteRepository : IClienteRepository {
         private readonly IDbConnection _conn;
 
         public ClienteRepository(IDbConnection conn) => _conn = conn;
 
         public IDbConnection GetConnection() => _conn;
 
-        public Clientes? GetClientes(Guid id) => _conn.QueryFirstOrDefault<Clientes>
+        public Cliente? GetClientes(Guid id) => _conn.QueryFirstOrDefault<Clientes>
     }
 }
