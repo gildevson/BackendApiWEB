@@ -1,10 +1,8 @@
 ﻿using System.Data;
 using BackendApiWEB.Models;
 
-namespace BackendApiWEB.Data.Interfaces
-{
-    public interface IClienteRepository
-    {
+namespace BackendApiWEB.Data.Interfaces {
+    public interface IClienteRepository  {
 
         IDbConnection GetDbConnection();
 
