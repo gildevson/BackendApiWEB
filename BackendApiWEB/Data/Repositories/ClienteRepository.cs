@@ -7,14 +7,20 @@ using BackendApiWEB.Data.Interfaces;
 
 namespace BackendApiWEB.Data.Repositories
 {
-    public class ClienteRepository : IClienteRepository
-    {
+    public class ClienteRepository : IClienteRepository {
         private readonly IDbConnection _conn;
 
         public ClienteRepository(IDbConnection conn) => _conn = conn;
 
         public IDbConnection GetConnection() => _conn;
 
-        public Cliente? GetClientes(Guid id) => _conn.QueryFirstOrDefault<Clientes>
+        public Cliente? GetById(Guid id) 
+            => _conn.QueryFirstOrDefault<Cliente>
+            (@"SELECT id, Nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm FROM dbo.Clientes where id = @id", new { id});
+
+        public IEnumerable<Produtos> ListAll()
+            => _conn.Query<Produtos>
+            (@"SELECT id, Nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm FROM dbo.Clientes");
+            
     }
 }

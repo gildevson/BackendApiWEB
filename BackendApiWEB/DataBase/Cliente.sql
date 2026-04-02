@@ -11,8 +11,7 @@ GO
 CREATE TABLE [dbo].[Clientes](
 	[Id]             [uniqueidentifier] NOT NULL,
 	[Nome]           [nvarchar](150)    NOT NULL,
-	[CPF]            [varchar](14)      NULL,
-	[CNPJ]           [varchar](18)      NULL,
+	[CnpjCpf]        [varchar](18)      NULL,
 	[Email]          [varchar](200)     NULL,
 	[Telefone]       [varchar](20)      NULL,
 	[Endereco]       [nvarchar](300)    NULL,
