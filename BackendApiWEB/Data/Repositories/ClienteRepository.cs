@@ -15,7 +15,8 @@ namespace BackendApiWEB.Data.Repositories
 
         public Cliente? GetById(Guid id) 
             => _conn.QueryFirstOrDefault<Cliente>
-            (@"SELECT id, Nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm FROM dbo.Clientes where id = @id", new { id});
+            (@"SELECT id, Nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm FROM dbo.Clientes where id = @id", 
+                new { id});
 
         public IEnumerable<Cliente> ListAll()
             => _conn.Query<Cliente>
@@ -33,12 +34,13 @@ namespace BackendApiWEB.Data.Repositories
         }
 
 
-        public Guid Insert(Cliente cliente, IDbConnection conn, IDbTransaction? tran = null)
+        public Guid Insert(Cliente ClienteInsert, IDbConnection conn, IDbTransaction? tran = null)
         {
-            conn.Execute(@"INSERT INTO dbo.Clientes (id, nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm);",
-                new { cliente.Id, cliente.nome, cliente.CnpjCpf, cliente.Email }, 
+            conn.Execute(@"INSERT INTO dbo.Clientes (id, nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm)
+            VALUES(@id, @Nome, @Cnpj, );",
+                new { ClienteInsert.Id, ClienteInsert.Nome, ClienteInsert.CnpjCpf, ClienteInsert.Email, ClienteInsert. }, 
                 tran);
-            return cliente.id; 
+            return ClienteInsert.id; 
             
         }
     }

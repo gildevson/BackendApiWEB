@@ -34,3 +34,9 @@ ALTER TABLE [dbo].[Clientes] ADD DEFAULT (1)          FOR [Ativo]
 GO
 ALTER TABLE [dbo].[Clientes] ADD DEFAULT (getdate())  FOR [CriadoEm]
 GO
+
+
+
+ALTER TABLE dbo.clientes ADD Bairro nvarchar(100) null;
+AlTER TABLE dbo.clientes ADD Numero varchar(20) null;
+ALTER TABLE dbo.clientes ADD Complemento nvarchar(100)null;

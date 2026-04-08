@@ -2,17 +2,20 @@
 {
     public class Cliente
     {
-        Guid id { get; set; }
-        public string nome { get; set; }
+        public Guid id { get; set; }
+        public string Nome { get; set; }
         public string CnpjCpf { get; set; }
-        public string cep { get; set; }
-        public string cidade { get; set; }
-        public string endereco { get; set; }
-        public string bairro { get; set; }
+        public string Email { get; set;  }
+        public string Telefone { get; set; }
+        public string Endereco { get; set; }
+        public string Estado { get; set; }
+        public string Cidade { get; set; }
+        public string Bairro { get; set; }
         public string Numero { get; set; }
-        public string complemento { get; set; }
-        public string Estado { get; set; } 
-        public DateTime dataCadastro { get; set; }
+        public string Complemento { get; set; }
         public bool Ativo { get; set; } = true;
+        public DateTime CriadoEm { get; set; }
+        public DateTime AtualizadoEm { get; set; }
+        
     }
 }
