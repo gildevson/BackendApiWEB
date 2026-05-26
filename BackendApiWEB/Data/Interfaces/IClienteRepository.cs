@@ -10,7 +10,5 @@ namespace BackendApiWEB.Data.Interfaces {
         bool Delete(Guid id, IDbConnection conn, IDbConnection? tran = null);
         IEnumerable<Cliente> ListAll();
 
-
-
     }
 }

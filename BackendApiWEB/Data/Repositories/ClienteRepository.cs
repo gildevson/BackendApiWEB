@@ -23,24 +23,13 @@ namespace BackendApiWEB.Data.Repositories
             (@"SELECT id, Nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm FROM dbo.Clientes");
 
 
-        public Guid Insert(Produtos p, IDbConnection conn, IDbTransaction? tran = null)
-        {
-            conn.Execute(
-                @"INSERT INTO dbo.Produtos (Id, Nome, Descricao, Preco, Estoque, Ativo, CriadoEm)
-          VALUES (@Id, @Nome, @Descricao, @Preco, @Estoque, @Ativo, @CriadoEm);",
-                new { p.Id, p.Nome, p.Descricao, p.Preco, p.Estoque, p.Ativo, p.CriadoEm },
-                tran);
-                return p.Id;
-        }
 
-
-        public Guid Insert(Cliente ClienteInsert, IDbConnection conn, IDbTransaction? tran = null)
-        {
+        public Guid Insert(Cliente c, IDbConnection conn, IDbTransaction? tran = null) {
             conn.Execute(@"INSERT INTO dbo.Clientes (id, nome, CnpjCpf, Email, Telefone, Endereco, Cidade, Estado, CEP, Ativo, CriadoEm, AtualizadoEm)
             VALUES(@id, @Nome, @Cnpj, );",
-                new { ClienteInsert.Id, ClienteInsert.Nome, ClienteInsert.CnpjCpf, ClienteInsert.Email, ClienteInsert. }, 
+                new { c.Id, c.Nome, c.CnpjCpf, c.Email, c.Telefone, c.Endereco, c.Cidade, c.Estado, c.Cep, c.Ativo}, 
                 tran);
-            return ClienteInsert.id; 
+            return c.Id; 
             
         }
     }
