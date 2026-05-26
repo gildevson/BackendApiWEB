@@ -289,23 +289,46 @@ dotnet restore
 
 Execute os scripts SQL localizados na pasta `DataBase/` para criar as tabelas necessárias.
 
-### 4. Configure o appsettings.json
+### 4. Configure suas credenciais locais (OBRIGATORIO)
 
-Edite o arquivo `appsettings.json` com suas configurações:
+> **O arquivo `appsettings.json` NAO esta no repositorio por seguranca.**
+> Use o modelo abaixo para criar o seu localmente.
+
+**Passo 1** — Copie o arquivo de exemplo:
+
+```bash
+cp BackendApiWEB/appsettings.Example.json BackendApiWEB/appsettings.json
+```
+
+**Passo 2** — Abra o `appsettings.json` e preencha com seus dados reais:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=BackendApiDB;Trusted_Connection=True;TrustServerCertificate=True;"
+    "DefaultConnection": "Server=localhost;Database=SistemaPDV;User Id=seu_usuario;Password=sua_senha;TrustServerCertificate=True;"
   },
-  "JwtSettings": {
-    "Secret": "sua-chave-secreta-minimo-32-caracteres-aqui",
+  "Jwt": {
+    "Key": "GERE_UMA_CHAVE_DE_64_CARACTERES_ALEATORIOS_AQUI",
     "Issuer": "BackendApiWEB",
-    "Audience": "FrontendApp",
-    "ExpirationInMinutes": 60
+    "Audience": "FrontendAngular"
+  },
+  "Email": {
+    "Remetente": "seu_email@gmail.com",
+    "Senha": "sua_senha_de_app_gmail"
   }
 }
 ```
+
+**Como gerar uma chave JWT segura:**
+
+```bash
+# PowerShell
+[System.Convert]::ToBase64String((1..64 | ForEach-Object { Get-Random -Maximum 256 }))
+
+# Ou acesse: https://generate-secret.vercel.app/64
+```
+
+> **Nunca commite o `appsettings.json` com dados reais. Ele ja esta no `.gitignore`.**
 
 ---
 

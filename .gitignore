@@ -19,10 +19,34 @@ artifacts/
 Thumbs.db
 Desktop.ini
 
-# Configurações locais
+# -------------------------------------------------------
+# SEGURANÇA — arquivos com credenciais e segredos
+# -------------------------------------------------------
+
+# appsettings com dados sensiveis (senha do banco, JWT key, etc.)
+# Use appsettings.Example.json como modelo no repositorio
+appsettings.json
 appsettings.Development.json
 appsettings.Local.json
+appsettings.Production.json
+appsettings.Staging.json
 
+# dotnet user-secrets (ficam fora do projeto, mas por garantia)
+secrets.json
+
+# Variaveis de ambiente
+.env
+.env.*
+
+# Certificados SSL/TLS
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+*.cer
+
+# -------------------------------------------------------
 # IDE JetBrains
 .idea/
 *.iml
